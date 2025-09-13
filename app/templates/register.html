@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account - SoundSeparator Pro{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center min-vh-100 align-items-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="auth-card" data-aos="fade-up">
+                    <div class="card bg-dark-card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <!-- Header -->
+                            <div class="text-center mb-4">
+                                <div class="auth-icon mb-3">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <h2 class="text-white fw-bold">Create Your Account</h2>
+                                <p class="text-muted">Join the future of medical audio analysis</p>
+                            </div>
+
+                            <!-- Registration Form -->
+                            <form method="POST" class="needs-validation" novalidate>
+                                {{ form.hidden_tag() }}
+
+                                <!-- Personal Information -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            {{ form.first_name(class="form-control form-control-dark", placeholder="First Name") }}
+                                            <label for="{{ form.first_name.id }}">
+                                                <i class="fas fa-user me-2"></i>First Name
+                                            </label>
+                                            {% if form.first_name.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.first_name.errors[0] }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            {{ form.last_name(class="form-control form-control-dark", placeholder="Last Name") }}
+                                            <label for="{{ form.last_name.id }}">
+                                                <i class="fas fa-user me-2"></i>Last Name
+                                            </label>
+                                            {% if form.last_name.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.last_name.errors[0] }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Account Information -->
+                                <div class="form-floating mb-3">
+                                    {{ form.username(class="form-control form-control-dark", placeholder="Username") }}
+                                    <label for="{{ form.username.id }}">
+                                        <i class="fas fa-at me-2"></i>Username
+                                    </label>
+                                    {% if form.username.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.username.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    {{ form.email(class="form-control form-control-dark", placeholder="Email Address") }}
+                                    <label for="{{ form.email.id }}">
+                                        <i class="fas fa-envelope me-2"></i>Email Address
+                                    </label>
+                                    {% if form.email.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.email.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Professional Information -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            {{ form.profession(class="form-select form-select-dark") }}
+                                            <label for="{{ form.profession.id }}">
+                                                <i class="fas fa-briefcase me-2"></i>Profession
+                                            </label>
+                                            {% if form.profession.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.profession.errors[0] }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            {{ form.phone(class="form-control form-control-dark", placeholder="Phone Number") }}
+                                            <label for="{{ form.phone.id }}">
+                                                <i class="fas fa-phone me-2"></i>Phone Number
+                                            </label>
+                                            {% if form.phone.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.phone.errors[0] }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    {{ form.institution(class="form-control form-control-dark", placeholder="Institution/Hospital") }}
+                                    <label for="{{ form.institution.id }}">
+                                        <i class="fas fa-hospital me-2"></i>Institution/Hospital
+                                    </label>
+                                    {% if form.institution.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.institution.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Password Fields -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            {{ form.password(class="form-control form-control-dark", placeholder="Password") }}
+                                            <label for="{{ form.password.id }}">
+                                                <i class="fas fa-lock me-2"></i>Password
+                                            </label>
+                                            {% if form.password.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.password.errors[0] }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            {{ form.password2(class="form-control form-control-dark", placeholder="Confirm Password") }}
+                                            <label for="{{ form.password2.id }}">
+                                                <i class="fas fa-lock me-2"></i>Confirm Password
+                                            </label>
+                                            {% if form.password2.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ form.password2.errors[0] }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Terms and Conditions -->
+                                <div class="form-check mb-4">
+                                    {{ form.terms(class="form-check-input") }}
+                                    <label class="form-check-label text-muted" for="{{ form.terms.id }}">
+                                        I agree to the <a href="#" class="text-primary">Terms of Service</a> and 
+                                        <a href="#" class="text-primary">Privacy Policy</a>
+                                    </label>
+                                    {% if form.terms.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.terms.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="d-grid mb-3">
+                                    {{ form.submit(class="btn btn-primary-custom btn-lg") }}
+                                </div>
+                            </form>
+
+                            <!-- Login Link -->
+                            <div class="text-center">
+                                <p class="text-muted mb-0">
+                                    Already have an account? 
+                                    <a href="{{ url_for('main.login') }}" class="text-primary">Sign in here</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Form validation animation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - SoundSeparator Pro{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center min-vh-100 align-items-center">
+            <div class="col-lg-5 col-xl-4">
+                <div class="auth-card" data-aos="fade-up">
+                    <div class="card bg-dark-card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <!-- Header -->
+                            <div class="text-center mb-4">
+                                <div class="auth-icon mb-3">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </div>
+                                <h2 class="text-white fw-bold">Welcome Back</h2>
+                                <p class="text-muted">Sign in to your account</p>
+                            </div>
+
+                            <!-- Login Form -->
+                            <form method="POST" class="needs-validation" novalidate>
+                                {{ form.hidden_tag() }}
+
+                                <div class="form-floating mb-3">
+                                    {{ form.username(class="form-control form-control-dark", placeholder="Username or Email") }}
+                                    <label for="{{ form.username.id }}">
+                                        <i class="fas fa-user me-2"></i>Username or Email
+                                    </label>
+                                    {% if form.username.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.username.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    {{ form.password(class="form-control form-control-dark", placeholder="Password") }}
+                                    <label for="{{ form.password.id }}">
+                                        <i class="fas fa-lock me-2"></i>Password
+                                    </label>
+                                    {% if form.password.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.password.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-auto">
+                                        <div class="form-check">
+                                            {{ form.remember_me(class="form-check-input") }}
+                                            <label class="form-check-label text-muted" for="{{ form.remember_me.id }}">
+                                                Remember me
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col text-end">
+                                        <a href="#" class="text-primary small">Forgot password?</a>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid mb-3">
+                                    {{ form.submit(class="btn btn-primary-custom btn-lg") }}
+                                </div>
+                            </form>
+
+                            <!-- Divider -->
+                            <div class="divider mb-3">
+                                <span class="text-muted">or</span>
+                            </div>
+
+                            <!-- Social Login -->
+                            <div class="d-grid gap-2 mb-4">
+                                <button class="btn btn-outline-light">
+                                    <i class="fab fa-google me-2"></i>Continue with Google
+                                </button>
+                                <button class="btn btn-outline-light">
+                                    <i class="fab fa-microsoft me-2"></i>Continue with Microsoft
+                                </button>
+                            </div>
+
+                            <!-- Register Link -->
+                            <div class="text-center">
+                                <p class="text-muted mb-0">
+                                    Don't have an account? 
+                                    <a href="{{ url_for('main.register') }}" class="text-primary">Create one now</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

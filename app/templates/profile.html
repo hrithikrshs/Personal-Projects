@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - SoundSeparator Pro{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Page Header -->
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="profile-avatar mb-3">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h1 class="display-5 fw-bold text-white">My Profile</h1>
+                <p class="lead text-muted">Manage your account settings and preferences</p>
+            </div>
+
+            <!-- Profile Form -->
+            <div class="card bg-dark-card border-0 shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-body p-5">
+                    <form method="POST" class="needs-validation" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <!-- Personal Information -->
+                        <div class="section-header mb-4">
+                            <h4 class="text-white">
+                                <i class="fas fa-user me-2"></i>Personal Information
+                            </h4>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ form.first_name(class="form-control form-control-dark", placeholder="First Name") }}
+                                    <label for="{{ form.first_name.id }}">First Name</label>
+                                    {% if form.first_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.first_name.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ form.last_name(class="form-control form-control-dark", placeholder="Last Name") }}
+                                    <label for="{{ form.last_name.id }}">Last Name</label>
+                                    {% if form.last_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.last_name.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            {{ form.email(class="form-control form-control-dark", placeholder="Email Address") }}
+                            <label for="{{ form.email.id }}">Email Address</label>
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.email.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Professional Information -->
+                        <div class="section-header mb-4 mt-5">
+                            <h4 class="text-white">
+                                <i class="fas fa-briefcase me-2"></i>Professional Information
+                            </h4>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ form.profession(class="form-select form-select-dark") }}
+                                    <label for="{{ form.profession.id }}">Profession</label>
+                                    {% if form.profession.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.profession.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ form.phone(class="form-control form-control-dark", placeholder="Phone Number") }}
+                                    <label for="{{ form.phone.id }}">Phone Number</label>
+                                    {% if form.phone.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.phone.errors[0] }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            {{ form.institution(class="form-control form-control-dark", placeholder="Institution/Hospital") }}
+                            <label for="{{ form.institution.id }}">Institution/Hospital</label>
+                            {% if form.institution.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.institution.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Account Statistics -->
+                        <div class="section-header mb-4 mt-5">
+                            <h4 class="text-white">
+                                <i class="fas fa-chart-bar me-2"></i>Account Statistics
+                            </h4>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="stat-card-small">
+                                    <div class="stat-icon-small bg-primary-soft">
+                                        <i class="fas fa-calendar-alt text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-white mb-1">Member Since</h6>
+                                        <small class="text-muted">{{ current_user.created_at.strftime('%B %Y') }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card-small">
+                                    <div class="stat-icon-small bg-success-soft">
+                                        <i class="fas fa-file-audio text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-white mb-1">Files Processed</h6>
+                                        <small class="text-muted">{{ current_user.audio_files|length }} files</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card-small">
+                                    <div class="stat-icon-small bg-warning-soft">
+                                        <i class="fas fa-shield-alt text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-white mb-1">Account Status</h6>
+                                        <small class="text-success">Active</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-light">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            {{ form.submit(class="btn btn-primary-custom") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="card bg-danger bg-opacity-10 border-danger border-opacity-25 shadow-lg mt-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="card-body p-4">
+                    <h5 class="text-danger mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Danger Zone
+                    </h5>
+                    <p class="text-muted mb-3">
+                        These actions are irreversible. Please proceed with caution.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-outline-danger" onclick="changePassword()">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash me-2"></i>Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+function changePassword() {
+    // Implement password change modal
+    alert('Password change functionality would be implemented here');
+}
+
+function deleteAccount() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        alert('Account deletion functionality would be implemented here');
+    }
+}
+</script>
+{% endblock %}

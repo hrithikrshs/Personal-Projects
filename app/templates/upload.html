@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Audio - SoundSeparator Pro{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="page-icon mb-3">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h1 class="display-5 fw-bold text-white">Upload Audio File</h1>
+                <p class="lead text-muted">Upload your biological audio file for advanced AI-powered analysis</p>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="card bg-dark-card border-0 shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-body p-5">
+                    <form method="POST" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+                        {{ form.hidden_tag() }}
+
+                        <!-- File Upload Area -->
+                        <div class="upload-area mb-4">
+                            <div class="upload-zone" id="uploadZone">
+                                <div class="upload-content">
+                                    <div class="upload-icon mb-3">
+                                        <i class="fas fa-file-audio"></i>
+                                    </div>
+                                    <h4 class="text-white mb-2">Drop your audio file here</h4>
+                                    <p class="text-muted mb-3">or click to browse files</p>
+                                    <div class="supported-formats">
+                                        <span class="badge bg-primary me-2">WAV</span>
+                                        <span class="badge bg-success me-2">MP3</span>
+                                        <span class="badge bg-warning">FLAC</span>
+                                    </div>
+                                    {{ form.audio_file(class="file-input", id="audioFile", accept=".wav,.mp3,.flac") }}
+                                </div>
+                            </div>
+                            {% if form.audio_file.errors %}
+                                <div class="text-danger mt-2">
+                                    {{ form.audio_file.errors[0] }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- File Info Display -->
+                        <div class="file-info-card" id="fileInfoCard" style="display: none;">
+                            <div class="card bg-secondary-dark border-0 mb-4">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="file-icon">
+                                                <i class="fas fa-file-audio text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <h6 class="text-white mb-1" id="fileName">filename.wav</h6>
+                                            <small class="text-muted" id="fileSize">0 MB</small>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" id="removeFile">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Processing Parameters -->
+                        <div class="processing-params">
+                            <h5 class="text-white mb-4">
+                                <i class="fas fa-cog me-2"></i>Processing Parameters
+                            </h5>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.n_components(class="form-control form-control-dark") }}
+                                        <label for="{{ form.n_components.id }}">
+                                            <i class="fas fa-layer-group me-2"></i>NMF Components
+                                        </label>
+                                        <div class="form-text text-muted">
+                                            Number of components for matrix factorization (2-20)
+                                        </div>
+                                        {% if form.n_components.errors %}
+                                            <div class="text-danger mt-1">
+                                                {{ form.n_components.errors[0] }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.max_iterations(class="form-control form-control-dark") }}
+                                        <label for="{{ form.max_iterations.id }}">
+                                            <i class="fas fa-sync me-2"></i>Max Iterations
+                                        </label>
+                                        <div class="form-text text-muted">
+                                            Maximum iterations for NMF convergence (100-10000)
+                                        </div>
+                                        {% if form.max_iterations.errors %}
+                                            <div class="text-danger mt-1">
+                                                {{ form.max_iterations.errors[0] }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.sample_rate(class="form-control form-control-dark") }}
+                                        <label for="{{ form.sample_rate.id }}">
+                                            <i class="fas fa-wave-square me-2"></i>Sample Rate (Hz)
+                                        </label>
+                                        <div class="form-text text-muted">
+                                            Audio resampling rate (8000-48000 Hz)
+                                        </div>
+                                        {% if form.sample_rate.errors %}
+                                            <div class="text-danger mt-1">
+                                                {{ form.sample_rate.errors[0] }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form.description(class="form-control form-control-dark", rows="3", style="height: 58px;") }}
+                                        <label for="{{ form.description.id }}">
+                                            <i class="fas fa-comment me-2"></i>Description (Optional)
+                                        </label>
+                                        {% if form.description.errors %}
+                                            <div class="text-danger mt-1">
+                                                {{ form.description.errors[0] }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            {{ form.submit(class="btn btn-primary-custom btn-lg", id="submitBtn") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Processing Tips -->
+            <div class="row mt-5" data-aos="fade-up" data-aos-delay="400">
+                <div class="col-md-4">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-lightbulb text-warning"></i>
+                        </div>
+                        <h6 class="text-white">File Quality</h6>
+                        <p class="text-muted small">Use high-quality audio files (16kHz+) for best results</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-clock text-info"></i>
+                        </div>
+                        <h6 class="text-white">Processing Time</h6>
+                        <p class="text-muted small">Processing typically takes 30-60 seconds per minute of audio</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-shield-alt text-success"></i>
+                        </div>
+                        <h6 class="text-white">Privacy</h6>
+                        <p class="text-muted small">Your files are encrypted and automatically deleted after 30 days</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('audioFile');
+    const fileInfoCard = document.getElementById('fileInfoCard');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const removeFileBtn = document.getElementById('removeFile');
+    const uploadForm = document.getElementById('uploadForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Drag and drop functionality
+    uploadZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+
+    uploadZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileSelect(files[0]);
+        }
+    });
+
+    uploadZone.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            handleFileSelect(this.files[0]);
+        }
+    });
+
+    removeFileBtn.addEventListener('click', function() {
+        fileInput.value = '';
+        fileInfoCard.style.display = 'none';
+        uploadZone.style.display = 'block';
+    });
+
+    function handleFileSelect(file) {
+        const maxSize = 16 * 1024 * 1024; // 16MB
+
+        if (file.size > maxSize) {
+            alert('File size must be less than 16MB');
+            return;
+        }
+
+        const allowedTypes = ['audio/wav', 'audio/mpeg', 'audio/flac'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Please select a valid audio file (WAV, MP3, or FLAC)');
+            return;
+        }
+
+        // Update file info display
+        fileName.textContent = file.name;
+        fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+        // Show file info and hide upload zone
+        fileInfoCard.style.display = 'block';
+        uploadZone.style.display = 'none';
+    }
+
+    // Form submission with loading state
+    uploadForm.addEventListener('submit', function(e) {
+        if (!fileInput.files.length) {
+            e.preventDefault();
+            alert('Please select an audio file to upload');
+            return;
+        }
+
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        submitBtn.disabled = true;
+
+        // Show loading overlay
+        document.getElementById('loadingOverlay').style.display = 'flex';
+    });
+
+    // Auto-adjust parameters based on file
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            // Auto-suggest parameters based on file duration (if we could get it)
+            // This would require additional audio analysis
+        }
+    });
+});
+</script>
+{% endblock %}

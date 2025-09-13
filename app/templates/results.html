@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - SoundSeparator Pro{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="text-center mb-5" data-aos="fade-up">
+        <div class="page-icon mb-3">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <h1 class="display-5 fw-bold text-white">Analysis Results</h1>
+        <p class="lead text-muted">Detailed analysis of {{ audio_file.original_filename }}</p>
+    </div>
+
+    <!-- File Information -->
+    <div class="card bg-dark-card border-0 shadow-lg mb-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <div class="file-icon-large">
+                        <i class="fas fa-file-audio text-primary"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <h4 class="text-white mb-1">{{ audio_file.original_filename }}</h4>
+                    <div class="row text-muted small">
+                        <div class="col-md-3">
+                            <i class="fas fa-clock me-1"></i>
+                            Duration: {{ "%.2f"|format(audio_file.duration) }}s
+                        </div>
+                        <div class="col-md-3">
+                            <i class="fas fa-wave-square me-1"></i>
+                            Sample Rate: {{ audio_file.sample_rate }}Hz
+                        </div>
+                        <div class="col-md-3">
+                            <i class="fas fa-hdd me-1"></i>
+                            Size: {{ "%.2f"|format(audio_file.file_size / (1024*1024)) }}MB
+                        </div>
+                        <div class="col-md-3">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ audio_file.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="exportResults('pdf')">
+                                <i class="fas fa-file-pdf me-2"></i>PDF Report
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportResults('csv')">
+                                <i class="fas fa-file-csv me-2"></i>CSV Data
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportResults('json')">
+                                <i class="fas fa-file-code me-2"></i>JSON Data
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Statistics -->
+    {% if results.processing_result.results %}
+    <div class="row mb-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary-soft">
+                    <i class="fas fa-heartbeat text-primary"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="text-white">{{ results.processing_result.results.cluster_0_count }}</h3>
+                    <p class="text-muted mb-0">Heart Sound Segments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-success-soft">
+                    <i class="fas fa-lungs text-success"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="text-white">{{ results.processing_result.results.cluster_1_count }}</h3>
+                    <p class="text-muted mb-0">Lung Sound Segments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-warning-soft">
+                    <i class="fas fa-percentage text-warning"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="text-white">{{ "%.1f"|format(results.processing_result.results.cluster_ratio * 100) }}%</h3>
+                    <p class="text-muted mb-0">Heart Sound Ratio</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-info-soft">
+                    <i class="fas fa-layer-group text-info"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="text-white">{{ results.processing_result.results.n_components }}</h3>
+                    <p class="text-muted mb-0">NMF Components</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Analysis Results Tabs -->
+    <div class="card bg-dark-card border-0 shadow-lg" data-aos="fade-up" data-aos-delay="300">
+        <div class="card-header bg-transparent border-bottom border-secondary">
+            <ul class="nav nav-tabs nav-tabs-dark" id="resultsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab">
+                        <i class="fas fa-chart-pie me-2"></i>Summary
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="spectrogram-tab" data-bs-toggle="tab" data-bs-target="#spectrogram" type="button" role="tab">
+                        <i class="fas fa-chart-area me-2"></i>Spectrogram
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="components-tab" data-bs-toggle="tab" data-bs-target="#components" type="button" role="tab">
+                        <i class="fas fa-project-diagram me-2"></i>NMF Components
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="clustering-tab" data-bs-toggle="tab" data-bs-target="#clustering" type="button" role="tab">
+                        <i class="fas fa-sitemap me-2"></i>Clustering
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body p-4">
+            <div class="tab-content" id="resultsTabContent">
+
+                <!-- Summary Tab -->
+                <div class="tab-pane fade show active" id="summary" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            {% if results.summary_path %}
+                            <div class="visualization-container">
+                                <img src="{{ results.summary_path }}" alt="Summary Visualization" class="img-fluid rounded">
+
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <h5 class="text-white">Summary Not Available</h5>
+                                <p class="text-muted">There was an issue generating the summary plot.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="analysis-insights">
+                                <h5 class="text-white mb-3">
+                                    <i class="fas fa-lightbulb me-2"></i>Key Insights
+                                </h5>
+                                {% if results.processing_result.results %}
+                                {% set heart_ratio = results.processing_result.results.cluster_ratio %}
+                                {% set lung_ratio = 1 - heart_ratio %}
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-heartbeat text-danger"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h6 class="text-white mb-1">Heart Sound Dominance</h6>
+                                        <p class="text-muted small mb-0">
+                                            {% if heart_ratio > 0.6 %}
+                                            Heart sounds are predominant in this recording ({{ "%.1f"|format(heart_ratio * 100) }}%).
+                                            {% elif heart_ratio > 0.4 %}
+                                            Balanced mix of heart and lung sounds detected.
+                                            {% else %}
+                                            Lung sounds are more prominent ({{ "%.1f"|format(lung_ratio * 100) }}%).
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-chart-line text-primary"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h6 class="text-white mb-1">Signal Quality</h6>
+                                        <p class="text-muted small mb-0">
+                                            {% if results.processing_result.results.n_components >= 6 %}
+                                            High-quality signal with rich spectral content detected.
+                                            {% else %}
+                                            Moderate signal quality - consider higher sampling rate.
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-clock text-success"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h6 class="text-white mb-1">Temporal Distribution</h6>
+                                        <p class="text-muted small mb-0">
+                                            Sound events distributed across {{ "%.1f"|format(audio_file.duration) }} seconds of audio.
+                                        </p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="mt-4">
+                                    <h6 class="text-white mb-3">Recommendations</h6>
+                                    <ul class="list-unstyled text-muted small">
+                                        <li class="mb-2">
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                            Analysis completed successfully with clear sound separation
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-info-circle text-info me-2"></i>
+                                            Consider multiple recordings for comprehensive assessment
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                            This tool is for research purposes only - not diagnostic
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spectrogram Tab -->
+                <div class="tab-pane fade" id="spectrogram" role="tabpanel">
+                    <div class="visualization-section">
+                        <div class="section-header mb-4">
+                            <h5 class="text-white">
+                                <i class="fas fa-chart-area me-2"></i>Audio Spectrogram
+                            </h5>
+                            <p class="text-muted">Time-frequency representation of the audio signal showing spectral content over time.</p>
+                        </div>
+                        {% if results.spectrogram_path %}
+                        <div class="visualization-container">
+                            <img src="{{ results.spectrogram_path }}" alt="Spectrogram" class="img-fluid rounded">
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <h5 class="text-white">Spectrogram Not Available</h5>
+                            <p class="text-muted">There was an issue generating the spectrogram visualization.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- NMF Components Tab -->
+                <div class="tab-pane fade" id="components" role="tabpanel">
+                    <div class="visualization-section">
+                        <div class="section-header mb-4">
+                            <h5 class="text-white">
+                                <i class="fas fa-project-diagram me-2"></i>Non-negative Matrix Factorization Components
+                            </h5>
+                            <p class="text-muted">Frequency spectra (W) and temporal activations (H) extracted from the audio signal.</p>
+                        </div>
+                        {% if results.nmf_path %}
+                        <div class="visualization-container">
+                            <img src="{{ results.nmf_path }}" alt="NMF Components" class="img-fluid rounded">
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <h5 class="text-white">NMF Components Not Available</h5>
+                            <p class="text-muted">There was an issue generating the NMF components visualization.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Clustering Tab -->
+                <div class="tab-pane fade" id="clustering" role="tabpanel">
+                    <div class="visualization-section">
+                        <div class="section-header mb-4">
+                            <h5 class="text-white">
+                                <i class="fas fa-sitemap me-2"></i>K-Means Clustering Results
+                            </h5>
+                            <p class="text-muted">Classification of temporal segments into heart and lung sound categories.</p>
+                        </div>
+                        {% if results.cluster_path %}
+                        <div class="visualization-container">
+                            <img src="{{ results.cluster_path }}" alt="Clustering Results" class="img-fluid rounded">
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <h5 class="text-white">Clustering Results Not Available</h5>
+                            <p class="text-muted">There was an issue generating the clustering visualization.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="400">
+        <a href="{{ url_for('main.upload') }}" class="btn btn-primary-custom btn-lg me-3">
+            <i class="fas fa-plus me-2"></i>Analyze Another File
+        </a>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function exportResults(format) {
+    alert(`Exporting results as ${format.toUpperCase()}...`);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const tabLinks = document.querySelectorAll('#resultsTabs button[data-bs-toggle="tab"]');
+    tabLinks.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            const target = document.querySelector(e.target.getAttribute('data-bs-target'));
+            target.style.opacity = '0';
+            setTimeout(() => {
+                target.style.transition = 'opacity 0.3s ease-in-out';
+                target.style.opacity = '1';
+            }, 50);
+        });
+    });
+});
+document.querySelectorAll('.visualization-container img').forEach(img => {
+    img.addEventListener('click', function() {
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        modal.innerHTML = `
+            <div class="modal-backdrop" onclick="this.parentElement.remove()"></div>
+            <div class="modal-content">
+                <img src="${this.src}" alt="${this.alt}" class="modal-image">
+                <button class="modal-close" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    });
+});
+</script>
+{% endblock %}
