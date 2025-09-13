@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+Flask-WTF==1.2.1
+Flask-Login
+Flask-Migrate
+WTForms
+Werkzeug
+librosa
+numpy
+matplotlib
+scikit-learn
+Pillow
+python-dotenv
+email-validator
